@@ -1,7 +1,8 @@
-diff -rupN base-src//http/ngx_http_upstream.c src//http/ngx_http_upstream.c
---- base-src//http/ngx_http_upstream.c	2011-10-01 06:26:13.978004400 +0800
-+++ src//http/ngx_http_upstream.c	2011-06-14 15:26:29.696661635 +0800
-@@ -4259,6 +4259,17 @@ ngx_http_upstream_add(ngx_conf_t *cf, ng
+diff --git a/src/http/ngx_http_upstream.c b/src/http/ngx_http_upstream.c
+index e8d8773..1fba036 100644
+--- a/src/http/ngx_http_upstream.c
++++ b/src/http/ngx_http_upstream.c
+@@ -4259,6 +4259,17 @@ ngx_http_upstream_add(ngx_conf_t *cf, ngx_url_t *u, ngx_uint_t flags)
      uscf->line = cf->conf_file->line;
      uscf->port = u->port;
      uscf->default_port = u->default_port;
@@ -19,9 +20,10 @@ diff -rupN base-src//http/ngx_http_upstream.c src//http/ngx_http_upstream.c
  
      if (u->naddrs == 1) {
          uscf->servers = ngx_array_create(cf->pool, 1,
-diff -rupN base-src//http/ngx_http_upstream.h src//http/ngx_http_upstream.h
---- base-src//http/ngx_http_upstream.h	2011-10-01 06:26:13.978004400 +0800
-+++ src//http/ngx_http_upstream.h	2011-06-14 15:26:29.706661641 +0800
+diff --git a/src/http/ngx_http_upstream.h b/src/http/ngx_http_upstream.h
+index ef460a4..476a7be 100644
+--- a/src/http/ngx_http_upstream.h
++++ b/src/http/ngx_http_upstream.h
 @@ -106,6 +106,30 @@ struct ngx_http_upstream_srv_conf_s {
  
      ngx_array_t                     *servers;  /* ngx_http_upstream_server_t */
@@ -53,9 +55,10 @@ diff -rupN base-src//http/ngx_http_upstream.h src//http/ngx_http_upstream.h
      ngx_uint_t                       flags;
      ngx_str_t                        host;
      u_char                          *file_name;
-diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_upstream_round_robin.c
---- base-src//http/ngx_http_upstream_round_robin.c	2011-10-01 06:26:13.968004382 +0800
-+++ src//http/ngx_http_upstream_round_robin.c	2011-06-14 15:26:29.706661641 +0800
+diff --git a/src/http/ngx_http_upstream_round_robin.c b/src/http/ngx_http_upstream_round_robin.c
+index 52bd808..daec940 100644
+--- a/src/http/ngx_http_upstream_round_robin.c
++++ b/src/http/ngx_http_upstream_round_robin.c
 @@ -4,6 +4,8 @@
   */
  
@@ -65,7 +68,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
  #include <ngx_config.h>
  #include <ngx_core.h>
  #include <ngx_http.h>
-@@ -14,7 +16,6 @@ static ngx_int_t ngx_http_upstream_cmp_s
+@@ -14,7 +16,6 @@ static ngx_int_t ngx_http_upstream_cmp_servers(const void *one,
  static ngx_uint_t
  ngx_http_upstream_get_peer(ngx_http_upstream_rr_peers_t *peers);
  
@@ -73,7 +76,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
  ngx_int_t
  ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
      ngx_http_upstream_srv_conf_t *us)
-@@ -23,6 +24,7 @@ ngx_http_upstream_init_round_robin(ngx_c
+@@ -23,6 +24,7 @@ ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
      ngx_uint_t                     i, j, n;
      ngx_http_upstream_server_t    *server;
      ngx_http_upstream_rr_peers_t  *peers, *backup;
@@ -81,7 +84,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
  
      us->peer.init = ngx_http_upstream_init_round_robin_peer;
  
-@@ -57,6 +59,14 @@ ngx_http_upstream_init_round_robin(ngx_c
+@@ -57,6 +59,14 @@ ngx_http_upstream_init_round_robin(ngx_conf_t *cf,
                      continue;
                  }
  
@@ -96,7 +99,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
                  peers->peer[n].sockaddr = server[i].addrs[j].sockaddr;
                  peers->peer[n].socklen = server[i].addrs[j].socklen;
                  peers->peer[n].name = server[i].addrs[j].name;
-@@ -399,6 +409,12 @@ ngx_http_upstream_get_round_robin_peer(n
+@@ -399,6 +409,12 @@ ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc, void *data)
      if (rrp->peers->single) {
          peer = &rrp->peers->peer[0];
  
@@ -109,7 +112,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
      } else {
  
          /* there are several peers */
-@@ -425,6 +441,12 @@ ngx_http_upstream_get_round_robin_peer(n
+@@ -425,6 +441,12 @@ ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc, void *data)
  
                      if (!peer->down) {
  
@@ -122,7 +125,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
                          if (peer->max_fails == 0
                              || peer->fails < peer->max_fails)
                          {
-@@ -436,6 +458,10 @@ ngx_http_upstream_get_round_robin_peer(n
+@@ -436,6 +458,10 @@ ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc, void *data)
                              break;
                          }
  
@@ -133,7 +136,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
                          peer->current_weight = 0;
  
                      } else {
-@@ -473,6 +499,12 @@ ngx_http_upstream_get_round_robin_peer(n
+@@ -473,6 +499,12 @@ ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc, void *data)
  
                      if (!peer->down) {
  
@@ -146,7 +149,7 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
                          if (peer->max_fails == 0
                              || peer->fails < peer->max_fails)
                          {
-@@ -484,6 +516,10 @@ ngx_http_upstream_get_round_robin_peer(n
+@@ -484,6 +516,10 @@ ngx_http_upstream_get_round_robin_peer(ngx_peer_connection_t *pc, void *data)
                              break;
                          }
  
@@ -165,9 +168,10 @@ diff -rupN base-src//http/ngx_http_upstream_round_robin.c src//http/ngx_http_ups
  static ngx_uint_t
  ngx_http_upstream_get_peer(ngx_http_upstream_rr_peers_t *peers)
  {
-diff -rupN base-src//http/ngx_http_upstream_round_robin.h src//http/ngx_http_upstream_round_robin.h
---- base-src//http/ngx_http_upstream_round_robin.h	2011-10-01 06:26:13.968004382 +0800
-+++ src//http/ngx_http_upstream_round_robin.h	2011-06-14 15:26:29.706661641 +0800
+diff --git a/src/http/ngx_http_upstream_round_robin.h b/src/http/ngx_http_upstream_round_robin.h
+index a9cb257..aee17b5 100644
+--- a/src/http/ngx_http_upstream_round_robin.h
++++ b/src/http/ngx_http_upstream_round_robin.h
 @@ -26,6 +26,7 @@ typedef struct {
  
      ngx_uint_t                      max_fails;
