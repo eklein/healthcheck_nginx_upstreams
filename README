@@ -30,13 +30,28 @@ your healthcheck, unless you're sure the upstream won't send back chunked
 encoding.  See the sample config for an example.
 
 ==INSTALL==
-# Similar to the upstream_hash module
-
-cd nginx-0.7.62 # or whatever
-patch -p1 < /path/to/this/directory/nginx.patch
-./configure --add-module=/path/to/this/directory
+cd nginx-1.0.6 # <= 1.0.8 or whatever
+patch -p1 < /path/to/healthcheck.patch
+./configure --add-module=/path/to/healthcheck_nginx_upstreams
 make
 make install
+
+* install with upstream hash
+
+Download https://github.com/liseen/nginx_upstream_hash
+
+cd nginx-1.0.6 # <= 1.0.8 or whatever
+patch -p1 < /path/to/healthcheck.patch
+./configure --add-module=/path/to/healthcheck_nginx_upstreams \
+            --add-module=/path/to/nginx_upstream_hash
+make
+make install
+
+==Compatibility==
+The following versions of Nginx should work with this module:
+    *   0.8.x (last tested version is 0.8.54)
+    *   1.0.6 (last tested version is 1.0.6)
+
 
 ==How the module works==
 My first attempt was to spawn a pthread inside the master process, but nginx
