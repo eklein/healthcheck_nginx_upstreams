@@ -306,7 +306,12 @@ void ngx_http_healthcheck_mark_finished(ngx_http_healthcheck_status_t *stat) {
         }
     }
     if (stat->shm->concurrent >= stat->conf->health_failcount) {
-        stat->shm->down = stat->shm->last_down;
+        if (stat->shm->down != stat->shm->last_down) {
+            stat->shm->down = stat->shm->last_down;
+            ngx_log_error(NGX_LOG_NOTICE, stat->health_ev.log, 0,
+                "healthcheck peer: %V, down status changed to %A",
+                &stat->peer->name, stat->shm->down);
+        }
     }
     stat->shm->down_code = stat->state;
     ngx_close_connection(stat->pc->connection);
